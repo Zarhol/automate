@@ -4,5 +4,7 @@
 #include <wx/wx.h>
 #include "events.h"
 #include "ruleName.h"
+#include <iostream>
+
 
 #endif // _UTILS_H_

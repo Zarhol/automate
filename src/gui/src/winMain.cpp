@@ -3,6 +3,7 @@
 WinMain::WinMain(wxString const& title)
 				: wxFrame((wxFrame*)NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE) {
 	wxInitAllImageHandlers();
+	
 
 	// on charge les menus
 	loadMenuBar();
@@ -14,6 +15,7 @@ WinMain::WinMain(wxString const& title)
 
 	Center();
 	Maximize();
+
 }
 
 void WinMain::updateGrid() {
@@ -170,6 +172,64 @@ void WinMain::onHelp(wxCommandEvent & WXUNUSED(event)) {
 	help->Show(true);
 }
 
+void WinMain::onPaint(wxPaintEvent& event) {
+
+	// fonction qui permet d'afficher une grille
+
+
+    wxPaintDC monDc(this);
+
+    wxBrush maBrush(wxColour(0,0,0),wxSOLID ); //on creer un brush, celui ci permet de colorier en noire.
+
+    monDc.SetBrush(maBrush) ; // puis on le met à MonDC
+
+    wxSize taille = GetSize(); //on récupère la taille de la fenêtre
+
+    int  w = taille.GetWidth() - 50; //on décompose la taille de la fenêtre en hauteur et largeur
+    int h = taille.GetHeight() - 135;// et on fait en sorte que notre rectangle soit de la taille voulue
+
+    std::cout<<"hauteur : "<< h <<" || largeur : "<< w << std::endl; // a enlever plus tard
+
+    monDc.DrawRectangle(25,25,w,h); //je dessine mon rectangle qui part de x=25 y=25 et je fais un rectangle de côté w,h
+
+    wxColour maCouleur(100,100,100); //je créer une couleur puis je l'assigne a un crayon, puis je le met sur monDC
+    wxPen monCrayon(maCouleur,1,wxSOLID);
+    monDc.SetPen(monCrayon);
+
+    //début de création de la grille, je fais d'abord toutes les colones, puis toutes les lignes. 
+
+    for(int i = 20; i < w; i = i + 20){
+    	monDc.DrawLine(i+25,25,i+25,h+25);
+    }
+
+    for(int i = 20; i < h; i = i + 20){
+    	monDc.DrawLine(25,i+25,w+25,i+25);
+    }
+
+}
+
+void WinMain::onClick(wxMouseEvent& event) {
+	long x,y;
+	event.GetPosition(&x,&y);
+	std::cout <<"x est :"<< x <<" y est : "<< y << std::endl;
+
+	if(x > 25 && x < GetSize().GetWidth() - 25 && y > 25 && y < GetSize().GetHeight() - 110){
+		int a = (x - 25)/20;
+		a = a *20 + 25;
+
+		int b = (y-25)/20;
+		b = b*20 + 25;
+
+		wxPaintDC monDc(this);
+		wxBrush maBrush(wxColour(255,255,255),wxSOLID );
+		monDc.DrawRectangle(a,b,20,20);
+
+
+		
+	}
+}
+
+
 /**************************************************************************/
 /************************ PROTECTED **************************************/
 /************************************************************************/
@@ -267,6 +327,7 @@ void WinMain::loadToolBar() {
 		toolbar->AddControl(bbZoomIn);
 		toolbar->AddControl(bbZoomOut);
 		toolbar->AddControl(bbFit);
+
 }
 
 /**************************************************************************/
@@ -280,4 +341,6 @@ BEGIN_EVENT_TABLE(WinMain, wxFrame)
     EVT_MENU		(evt_about, WinMain::onAbout) // lorsque qu'on veut des infos supplémentaires
     EVT_MENU		(evt_helpOnline, WinMain::onHelpOnline)
     EVT_MENU		(evt_help, WinMain::onHelp)
+    EVT_PAINT		(WinMain::onPaint)
+    EVT_LEFT_UP		(WinMain::onClick)
 END_EVENT_TABLE()

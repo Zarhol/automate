@@ -15,6 +15,8 @@ class WinMain : public wxFrame {
 	protected:
 		bool play_; // vrai si en lecture, faux sinon
 
+
+
 	public:
 		WinMain(wxString const& title);
 
@@ -62,6 +64,8 @@ class WinMain : public wxFrame {
 		void onAbout				(wxCommandEvent & event);
 		void onHelpOnline			(wxCommandEvent & event);
 		void onHelp					(wxCommandEvent & event);
+		void onPaint				(wxPaintEvent& event);
+		void onClick				(wxMouseEvent& event);
 
 	protected:
 		void loadToolBar();
