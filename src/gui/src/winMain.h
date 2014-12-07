@@ -5,6 +5,7 @@
 #include "winAbout.h"
 #include "winHelpOnline.h"
 #include "winHelp.h"
+#include "winPanel.h"
 #include <wx/colordlg.h>
 
 /*
@@ -14,9 +15,7 @@
 class WinMain : public wxFrame {
 	protected:
 		bool play_; // vrai si en lecture, faux sinon
-
-
-
+		
 	public:
 		WinMain(wxString const& title);
 
@@ -35,6 +34,7 @@ class WinMain : public wxFrame {
 		wxColor pickColor(); // demande à l'utilisateur de choisir une fenêtre
 		void togglePlay(); // active ou désactive la lecture auto
 		void nextStep(); // avance d'un état et update
+		
 
 
 
@@ -64,8 +64,7 @@ class WinMain : public wxFrame {
 		void onAbout				(wxCommandEvent & event);
 		void onHelpOnline			(wxCommandEvent & event);
 		void onHelp					(wxCommandEvent & event);
-		void onPaint				(wxPaintEvent& event);
-		void onClick				(wxMouseEvent& event);
+
 
 	protected:
 		void loadToolBar();
