@@ -1,10 +1,10 @@
 #include "winMain.h"
 
+
 WinMain::WinMain(wxString const& title)
 				: wxFrame((wxFrame*)NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE) {
 	wxInitAllImageHandlers();
 	
-
 	// on charge les menus
 	loadMenuBar();
 	// la barre d'outils
@@ -13,8 +13,29 @@ WinMain::WinMain(wxString const& title)
 	CreateStatusBar();
 	SetStatusText(_T("Bienvenue sur ACS !")); // pas forcément utile pour le moment, mais le deviendra
 
+
 	Center();
 	Maximize();
+
+	// -------- partie qui initialise les panels --------------------------------
+
+	wxPanel *panel = new wxPanel(this, wxID_ANY); //panel principal
+	winPanel *rightPanel = new winPanel(panel); // le panel de droite, c'est la classe qui gère la grille
+	wxPanel *leftPanel = new wxPanel(panel); // le panel de gauche, ce sera le picker, il faudra sûrement le changer en classe aussi
+
+	wxColour leftColour(50,45,50); //  Créé une couleur pour le panel de gauche, celui de droite sera la grille
+
+	leftPanel->SetBackgroundColour(leftColour); // Met la couleur au background du panel de gauche
+
+	wxBoxSizer *sizer_horizontal = new wxBoxSizer(wxHORIZONTAL); //  créé un boxSizer, celui ci va permettre de mettre les deux 
+	// panels l'un à côté de l'autre
+	
+	//ajoute les panels au boxSizer (nomPanel, taille prie, les endroit des bords, et la taille du bord)
+	sizer_horizontal->Add(leftPanel, 1 ,wxALL | wxEXPAND, 5);
+	sizer_horizontal->Add(rightPanel, 3 ,wxEXPAND | wxBOTTOM | wxRIGHT | wxTOP, 5);
+
+	//Met le sizer dans le panel principal.
+	panel->SetSizer(sizer_horizontal);
 
 }
 
@@ -79,6 +100,7 @@ void WinMain::togglePlay() {
 void WinMain::nextStep() {
 	/* à faire */
 }
+
 
 /**************************************************************************/
 /************************ EVENTS *****************************************/
@@ -171,64 +193,6 @@ void WinMain::onHelp(wxCommandEvent & WXUNUSED(event)) {
 	wxFrame *help = new WinHelp(this);
 	help->Show(true);
 }
-
-void WinMain::onPaint(wxPaintEvent& event) {
-
-	// fonction qui permet d'afficher une grille
-
-
-    wxPaintDC monDc(this);
-
-    wxBrush maBrush(wxColour(0,0,0),wxSOLID ); //on creer un brush, celui ci permet de colorier en noire.
-
-    monDc.SetBrush(maBrush) ; // puis on le met à MonDC
-
-    wxSize taille = GetSize(); //on récupère la taille de la fenêtre
-
-    int  w = taille.GetWidth() - 50; //on décompose la taille de la fenêtre en hauteur et largeur
-    int h = taille.GetHeight() - 135;// et on fait en sorte que notre rectangle soit de la taille voulue
-
-    std::cout<<"hauteur : "<< h <<" || largeur : "<< w << std::endl; // a enlever plus tard
-
-    monDc.DrawRectangle(25,25,w,h); //je dessine mon rectangle qui part de x=25 y=25 et je fais un rectangle de côté w,h
-
-    wxColour maCouleur(100,100,100); //je créer une couleur puis je l'assigne a un crayon, puis je le met sur monDC
-    wxPen monCrayon(maCouleur,1,wxSOLID);
-    monDc.SetPen(monCrayon);
-
-    //début de création de la grille, je fais d'abord toutes les colones, puis toutes les lignes. 
-
-    for(int i = 20; i < w; i = i + 20){
-    	monDc.DrawLine(i+25,25,i+25,h+25);
-    }
-
-    for(int i = 20; i < h; i = i + 20){
-    	monDc.DrawLine(25,i+25,w+25,i+25);
-    }
-
-}
-
-void WinMain::onClick(wxMouseEvent& event) {
-	long x,y;
-	event.GetPosition(&x,&y);
-	std::cout <<"x est :"<< x <<" y est : "<< y << std::endl;
-
-	if(x > 25 && x < GetSize().GetWidth() - 25 && y > 25 && y < GetSize().GetHeight() - 110){
-		int a = (x - 25)/20;
-		a = a *20 + 25;
-
-		int b = (y-25)/20;
-		b = b*20 + 25;
-
-		wxPaintDC monDc(this);
-		wxBrush maBrush(wxColour(255,255,255),wxSOLID );
-		monDc.DrawRectangle(a,b,20,20);
-
-
-		
-	}
-}
-
 
 /**************************************************************************/
 /************************ PROTECTED **************************************/
@@ -341,6 +305,4 @@ BEGIN_EVENT_TABLE(WinMain, wxFrame)
     EVT_MENU		(evt_about, WinMain::onAbout) // lorsque qu'on veut des infos supplémentaires
     EVT_MENU		(evt_helpOnline, WinMain::onHelpOnline)
     EVT_MENU		(evt_help, WinMain::onHelp)
-    EVT_PAINT		(WinMain::onPaint)
-    EVT_LEFT_UP		(WinMain::onClick)
 END_EVENT_TABLE()
