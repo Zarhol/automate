@@ -40,6 +40,8 @@ void winPanel::onPaint(wxPaintEvent& event) {
 
     for(int i = 20; i < w; i += 20){ //boucle qui dessine la grille
     	monDc.DrawLine(i,0,i,h);
+    }
+    for(int i=20; i<h;i+=20){
     	monDc.DrawLine(0,i,w,i);
     }
 }
