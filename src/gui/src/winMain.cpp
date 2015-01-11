@@ -20,12 +20,12 @@ WinMain::WinMain(wxString const& title)
 	// -------- partie qui initialise les panels --------------------------------
 
 	wxPanel *panel = new wxPanel(this, wxID_ANY); //panel principal
-	winPanel *rightPanel = new winPanel(panel); // le panel de droite, c'est la classe qui gère la grille
-	wxPanel *leftPanel = new wxPanel(panel); // le panel de gauche, ce sera le picker, il faudra sûrement le changer en classe aussi
+	gridPanel *rightPanel = new gridPanel(panel); // le panel de droite, c'est la classe qui gère la grille
+	pickPanel *leftPanel = new pickPanel(panel); // le panel de gauche, ce sera le picker
+
+	leftPanel->setGrid(rightPanel);
 
 	wxColour leftColour(50,45,50); //  Créé une couleur pour le panel de gauche, celui de droite sera la grille
-
-	leftPanel->SetBackgroundColour(leftColour); // Met la couleur au background du panel de gauche
 
 	wxBoxSizer *sizer_horizontal = new wxBoxSizer(wxHORIZONTAL); //  créé un boxSizer, celui ci va permettre de mettre les deux 
 	// panels l'un à côté de l'autre

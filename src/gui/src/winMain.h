@@ -5,7 +5,8 @@
 #include "winAbout.h"
 #include "winHelpOnline.h"
 #include "winHelp.h"
-#include "winPanel.h"
+#include "gridPanel.h"
+#include "pickPanel.h"
 #include <wx/colordlg.h>
 
 /*
@@ -18,7 +19,6 @@ class WinMain : public wxFrame {
 		
 	public:
 		WinMain(wxString const& title);
-
 
 		void updateGrid(); // permet de rafraichir la grille affichée
 		void quit(); // permet de fermer proprement la fenêtre en sauvegardant ce qu'il faut
