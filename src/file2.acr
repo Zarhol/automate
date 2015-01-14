@@ -1,0 +1,6 @@
+// fichier de création d'une règle
+#STATES:
+a
+
+#RULES
+a => R:a
