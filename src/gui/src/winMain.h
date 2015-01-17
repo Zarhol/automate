@@ -5,6 +5,7 @@
 #include "winAbout.h"
 #include "winHelpOnline.h"
 #include "winHelp.h"
+#include "winEdit.h"
 #include "gridPanel.h"
 #include "pickPanel.h"
 #include <wx/colordlg.h>

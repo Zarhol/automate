@@ -5,7 +5,7 @@ EXEC = ACS
 INCLUDES = -include wx/wx.h
 LIBS = `wx-config --libs`
 SRC = $(wildcard src/*.cpp)
-OBJ = $(addprefix obj/,$(notdir $(SRC:.cpp=.o)))
+OBJ = $(addprefix obj/,$(notdir $(SRC:.cpp=.o))) /usr/lib/x86_64-linux-gnu/libwx_gtk2u_stc-2.8.so.0
 
 all: $(EXEC)
 
