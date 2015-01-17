@@ -27,7 +27,15 @@ typedef enum evts {
 	evt_helpOnline,			// evenement à lancer lorsque l'on demande à accéder à l'aide en ligne
 	evt_help,				// evenement à lancer lorsque l'on demande l'affichage de la fenêtre d'aide
 
-	evt_select,				// evenement à lancer lorsque l'ont clique sur le selecteur 
+	evt_select,				// evenement à lancer lorsque l'ont clique sur le selecteur
+
+	//évnènement de la fenêtre d'edit
+
+	evt_save, //évènement à lancer lorsque l'on demande la sauvegarde de la règle
+	evt_new, //évènement à lancer lorsque l'on demande de créer une nouvelle règle
+	evt_load, //évènement à lancer lorsque l'on demande de charger une règle
+	evt_debog,
+
 
 	evt_ANY = -1			// tout évenement dont on ne veut pas capturer le résultat
 } evts;

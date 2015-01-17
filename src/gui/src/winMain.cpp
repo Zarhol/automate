@@ -5,6 +5,8 @@ WinMain::WinMain(wxString const& title)
 				: wxFrame((wxFrame*)NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE) {
 	wxInitAllImageHandlers();
 	
+	//SetIcon(wxIcon(_T("img/logo.xpm")));
+
 	// on charge les menus
 	loadMenuBar();
 	// la barre d'outils
@@ -120,7 +122,8 @@ void WinMain::onLoadRule(wxCommandEvent & WXUNUSED(event)) {
 }
 
 void WinMain::onEditRule(wxCommandEvent & WXUNUSED(event)) {
-	wxMessageBox(_T("Edition d'une règle"), _T("Edition"));
+	WinEdit *edit = new WinEdit(this); //lance la fenetre de l'editeur
+	edit->Show();
 }
 
 void WinMain::onSaveRule(wxCommandEvent & WXUNUSED(event)) {
@@ -302,6 +305,7 @@ void WinMain::loadToolBar() {
 BEGIN_EVENT_TABLE(WinMain, wxFrame)
     EVT_MENU		(evt_quit, WinMain::onQuit) // lors de la demande de fermeture via le menu
     EVT_MENU		(evt_loadRule, WinMain::onLoadRule) // chargement via le menu
+    EVT_MENU		(evt_createRule, WinMain::onEditRule)
     EVT_MENU		(evt_about, WinMain::onAbout) // lorsque qu'on veut des infos supplémentaires
     EVT_MENU		(evt_helpOnline, WinMain::onHelpOnline)
     EVT_MENU		(evt_help, WinMain::onHelp)
