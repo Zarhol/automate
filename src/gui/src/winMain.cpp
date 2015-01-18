@@ -53,7 +53,8 @@ void WinMain::quit() {
 bool WinMain::loadRule() {
 	/* afficher la fenêtre de chargement d'une règle */
 	/* tout est modal. Retourner la réussite du chargement ou pas */
-
+	WinLoader *loader = new WinLoader(this);
+	loader->ShowModal(); 
 	return true;
 }
 
@@ -113,11 +114,8 @@ void WinMain::onQuit(wxCommandEvent &  WXUNUSED(event)) {
 }
 
 void WinMain::onLoadRule(wxCommandEvent & WXUNUSED(event)) {
-	if(loadRule()) {
-		wxMessageBox(_T("Le chargement s'est déroulé sans encombre"), _T("Chargement réussi"));
-	}
-	else {		
-		wxMessageBox(_T("Le chargement s'est déroulé sans encombre"), _T("Chargement réussi"));
+	if(!loadRule()) {
+		wxMessageBox(_T("Il y a eu un problème lors du chargement d'une règle"), _T("Echec chargement"));
 	}
 }
 
