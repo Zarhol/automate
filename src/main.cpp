@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
 	vector<string> lines;
 	a.set(0, 0, 0);// bugge avec a.set(1, 1, 0); ... je ne sais pas pourquoi
 
-	for(unsigned int i = 0; i < 25; ++i) {
+	for(unsigned int i = 0; i < 1000000; ++i) {
 		reset(lines, win);
 		fill(lines, a, win);
 		disp(lines);

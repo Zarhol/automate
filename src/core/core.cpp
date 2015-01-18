@@ -160,8 +160,8 @@ string Core::getStateName(unsigned int state) {
 	return rule_.getStateName(state);
 }
 bool Core::isInRect(const_iterator const& it, Rect const& win, Rect * toCoord) const {
-	if(it->first.first < win.x || it->first.first > win.x + win.width
-	|| it->first.second < win.y || it->first.second > win.y + win.height) {
+	if(it->first.first < win.x || it->first.first >=win.x + win.width
+	|| it->first.second < win.y || it->first.second >= win.y + win.height) {
 		return false;
 	}
 	if(toCoord != NULL) {
