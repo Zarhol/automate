@@ -36,6 +36,8 @@ typedef enum evts {
 	evt_load, //évènement à lancer lorsque l'on demande de charger une règle
 	evt_debog,
 
+	evt_loadRuleACR,
+	evt_loadRuleACC,
 
 	evt_ANY = -1			// tout évenement dont on ne veut pas capturer le résultat
 } evts;
