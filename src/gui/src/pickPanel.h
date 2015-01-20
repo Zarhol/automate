@@ -2,17 +2,19 @@
 #define _PICK_PANEL_H_
 
 #include "utils.h"
-#include "gridPanel.h"
+#include <vector>
 
-class pickPanel : public wxPanel {
+  
+class pickPanel : public wxPanel { 
 	public:
-
-		gridPanel *grid;
 
 		pickPanel(wxPanel *Parent);
 
-		
-		void setGrid(gridPanel *grille);
+		wxListCtrl *list;
+
+		void reset();
+
+		std::vector<unsigned int> getStates();
 
 		void onResize(wxSizeEvent& event);
 		void onSelect(wxListEvent& event);

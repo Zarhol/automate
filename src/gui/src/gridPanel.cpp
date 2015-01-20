@@ -2,15 +2,19 @@
 
 
 
-gridPanel::gridPanel (wxPanel *Parent)
+gridPanel::gridPanel (wxPanel *Parent, pickPanel *picker)
 					:wxPanel(Parent) {
 
-	couleur = new wxColour(255,255,255); //couleur de base pour remplir une case
+	couleur = new wxColour(0, 0, 0); //couleur de base pour remplir une case
+	pick = picker;
+	
 }
 
 
+
 void gridPanel::setColour(wxColour *color){ //methode qui modifie la couleur
-	couleur = color;
+	delete couleur;
+	couleur = new wxColour(*color);
 }
 
 
@@ -30,20 +34,44 @@ bool gridPanel::isMouseOverGrid(){ //renvoi vrai si la souris est dans la grille
 void gridPanel::getCellHoveredByMouse(long mouseX, long mouseY, long & x, long & y){ 
 	//méthode permettant d'envoyer les coordonnés de la case a remplir.
 
-	x = mouseX/20;
-	x = x *20;
+	x = mouseX/15;
+	x = x *15;
 
-	y = mouseY/20;
-	y = y*20;
+	y = mouseY/15;
+	y = y*15;
 }
 
-/*void gridPanel::zoom(int x1,int y1, int x2, int y2){
-	wxMessageBox(_T("ca Zoooooomm"), _T("ZOOOOOOMMMM !"));
-	std::cout<<"yolo !"<<std::endl;
+/*void gridPanel::zoomIn(Rect & win, float coef) { // zoomIn = le zoom normal
+    long long width = (win.width-win.x)/coef;
+    long long height = (win.height-win.y)/coef;
+    win.x += (win.width-win.x-width)/2;
+    win.y += (win.height-win.y-height)/2;
+    win.width = width;
+    win.height = height;
+}
+
+void gridPanel::zoomOut(Rect & win, float coef) { // zoomOut = le dézoom
+    long long width = (win.width-win.x)*coef;
+    long long height = (win.height-win.y)*coef;
+    win.x += (win.width-win.x-width)/2;
+    win.y += (win.height-win.y-height)/2;
+    win.width = width;
+    win.height = height;
 }*/
 
 
-void gridPanel::onPaint(wxPaintEvent& event) {
+void gridPanel::getPos( int &posX,int &posY){
+	wxPoint pt = ScreenToClient( wxGetMousePosition());
+	posX = pt.x /15;
+	posY = pt.y /15;
+
+}
+ 
+void gridPanel::reset(){
+	paint();
+}
+
+void gridPanel::paint(){
 	wxPaintDC monDc(this); // créer un wxPaintDC
 
     wxBrush maBrush(wxColour(0,0,0),wxSOLID ); // creer un brush, celui ci permet de colorier en noire.
@@ -62,39 +90,129 @@ void gridPanel::onPaint(wxPaintEvent& event) {
     monDc.SetPen(monCrayon);
 
 
-    for(int i = 20; i < w; i += 20){ //boucle qui dessine la grille
+    for(int i = 15; i < w ; i += 15){ //boucle qui dessine la grille 
     	monDc.DrawLine(i,0,i,h);
     }
-    for(int i=20; i<h;i+=20){
+    for(int i = 15; i < h ; i += 15){
     	monDc.DrawLine(0,i,w,i);
     }
 }
 
-void gridPanel::onClick(wxMouseEvent& event) {
+void gridPanel::colorier(int posX, int posY){
+
+	posX = posX *16;
+	posY = posY *16;
+
+
+	wxPaintDC monDc(this);
+	wxBrush maBrush(*couleur ,wxSOLID );  // brush rempli la case d'une couleur
+	monDc.SetBrush(maBrush);
+	wxColour maCouleur(100,100,100);
+    wxPen monCrayon(maCouleur,1,wxSOLID);
+
+    monDc.SetPen(monCrayon);
+	monDc.DrawRectangle(posX,posY,16,16); 
+}
+
+void gridPanel::play(){
+	Core *a = &Core::getInstance();
+	Color cl;
+	wxColour cellCol;
+	a->update();
+	paint(); //réinitialise la grille
+
+	//à partir de là on lit les cellules à afficher et on utilise
+	wxSize taille = GetSize();
+	Core::const_iterator it = a->begin();
+	Rect rect;
+	rect.x = 0;
+	rect.y = 0;
+	rect.height = taille.GetX() / 16;
+	rect.width = taille.GetY() / 16;
+	Rect coord;
+	for(; it != a->end(); ++it){
+
+		if(a->isInRect(it,rect, &coord) ){
+
+			if(it->second.hasColor()){ //modifie la couleur en fonction de la couleur de la case.
+				cl = it->second.getColor();
+				cellCol = wxColour(cl.r,cl.g,cl.b);
+				setColour(&cellCol);
+			}
+			else {
+				cellCol = wxColour(0, 0, 0);
+				setColour(&cellCol);
+			}
+			colorier(coord.x, coord.y); //colorie la case
+
+		}
+	}
 	
+
+}
+
+
+
+void gridPanel::onClick(wxMouseEvent& event) {
+	Core *a = &Core::getInstance();
+
+	long posX,posY;
+	int coordX, coordY;
+	int coordonneeX, coordonneeY = -1;
+	wxPoint pt;
+	Color cl;
+
+	wxPaintDC monDc(this);
+	//wxBrush maBrush(*couleur ,wxSOLID );  // brush rempli la case d'une couleur
+	//monDc.SetBrush(maBrush);
+	wxColour maCouleur(100,100,100);
+	wxColour cellCol;
+    wxPen monCrayon(maCouleur,1,wxSOLID); 
+
+    monDc.SetPen(monCrayon);
 	do{
 
 		if(isMouseOverGrid()){
-			wxPoint pt = ScreenToClient( wxGetMousePosition() ); //récupère la position de la souris dans le panel
-			long posX,posY;
+			pt = ScreenToClient( wxGetMousePosition() ); //récupère la position de la souris dans le panel
+
 			getCellHoveredByMouse(pt.x,pt.y,posX,posY); //renvoi les valeurs x et y pour remplir une case sur posX et posY
+			
+			getPos(coordX, coordY);
+			if(coordX != coordonneeX || coordY != coordonneeY){
+				coordonneeX = coordX;
+				coordonneeY = coordY;
+				std::cout<<"x : "<<coordX<<" y : "<<coordY<<std::endl;
+				std::vector<unsigned int> vec = pick->getStates();
+				a->clear(coordonneeX,coordonneeY);
+				a->set(coordonneeX,coordonneeY,vec);
+				if(a->hasColor(coordonneeX,coordonneeY)){
+					cl = a->getColor(coordonneeX, coordonneeY);
+					cellCol = wxColour(cl.r,cl.g,cl.b);
+					setColour(&cellCol);
+				}
+				else {
+					cellCol = wxColour(0, 0, 0);
+					setColour(&cellCol);
+				}
+				monDc.SetBrush(wxBrush(*couleur, wxSOLID));
+			}
 
-			wxPaintDC monDc(this);
-			wxBrush maBrush(*couleur ,wxSOLID );  // brush rempli la case d'une couleur
-			monDc.SetBrush(maBrush);
 
-			wxColour maCouleur(100,100,100); 
-		    wxPen monCrayon(maCouleur,1,wxSOLID);
 
-		    monDc.SetPen(monCrayon);
-
-			monDc.DrawRectangle(posX,posY,21,21); //créé un carré qui rempli une case de la grille (actuellement en blanc)	
+			monDc.DrawRectangle(posX,posY,16,16); //créé un carré qui rempli une case de la grille (actuellement en blanc)	
 		}
 
 		
 	}while(wxGetMouseState().LeftDown()); //boucle tant que le bouton gauche de la souris est enfoncé
 
 }
+
+
+void gridPanel::onPaint(wxPaintEvent& event) {
+	paint();
+}
+
+
 
 BEGIN_EVENT_TABLE(gridPanel, wxPanel)
 	EVT_PAINT		(gridPanel::onPaint) //dessine la grille

@@ -3,9 +3,9 @@
 CXXFLAGS = `wx-config --cxxflags`
 EXEC = ACS
 INCLUDES = -include wx/wx.h
-LIBS = `wx-config --libs`
+LIBS = `wx-config --libs` -lboost_regex
 SRC = $(wildcard src/*.cpp)
-OBJ = $(addprefix obj/,$(notdir $(SRC:.cpp=.o))) /usr/lib/x86_64-linux-gnu/libwx_gtk2u_stc-2.8.so.0
+OBJ = $(addprefix obj/,$(notdir $(SRC:.cpp=.o))) /usr/lib/x86_64-linux-gnu/libwx_gtk2u_stc-2.8.so.0 $(wildcard ../core/obj/*) $(wildcard ../loader/obj/*) $(wildcard ../utils/obj/*)
 
 all: $(EXEC)
 

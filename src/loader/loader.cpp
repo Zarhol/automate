@@ -74,6 +74,7 @@ pair<string, string> Loader::defineCut(string const& filename, pair<unsigned int
 pair<string, string> Loader::cdtCut(string const& line) {
 	long place = line.find("=>");
 	if(place == string::npos) {
+		cout << line << endl;
 		err_.set((boost::format("l%1%: opérateur => manquant") % -5).str(), ERROR);
 		return make_pair<string, string>("", "");
 	}
@@ -352,9 +353,17 @@ bool Loader::isValidStateName(std::string const& state) const {
 bool Loader::load(std::string const& pathname, Rule_type type) {
 	switch(type) {
 		case type_rule : canUse_ = false;
+			states_.clear();
+			colorStates_.clear();
+			cells_.clear();
+			coords_.clear();
+			ruleFunc_ = "";
+			colorFunc_ = "";
+			isColor_ = false;
 			break;
 		case type_color : canUseColor_ = false;
 						  isColor_ = false;
+				colorFunc_ = "";
 			break;
 		default: return false;
 	}
@@ -363,6 +372,7 @@ bool Loader::load(std::string const& pathname, Rule_type type) {
 	}
 
 	err_.clear();
+
 	pair<unsigned int, unsigned int> lineOrigins;
 	pair<string, string> def = defineCut(pathname, lineOrigins);
 	retrieveStates(def.first, lineOrigins.first, (type == type_color ? colorStates_ : states_));
@@ -373,6 +383,8 @@ bool Loader::load(std::string const& pathname, Rule_type type) {
 	string out;
 
 	while(getline(f, buf)) {
+		trim(buf);
+		if(buf.empty()) continue;
 		def = cdtCut(buf);
 		if(type == type_color) {
 			if(!normalizeCdt(def.first, lineOrigins.second) || !normalizeColor(def.second, lineOrigins.second)) {

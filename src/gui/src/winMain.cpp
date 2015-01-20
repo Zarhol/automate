@@ -4,7 +4,7 @@
 WinMain::WinMain(wxString const& title)
 				: wxFrame((wxFrame*)NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE) {
 	wxInitAllImageHandlers();
-	
+	  
 	//SetIcon(wxIcon(_T("img/logo.xpm")));
 
 	// on charge les menus
@@ -16,16 +16,15 @@ WinMain::WinMain(wxString const& title)
 	SetStatusText(_T("Bienvenue sur ACS !")); // pas forcément utile pour le moment, mais le deviendra
 
 
-	Center();
+	Center(); 
 	Maximize();
 
 	// -------- partie qui initialise les panels --------------------------------
 
 	wxPanel *panel = new wxPanel(this, wxID_ANY); //panel principal
-	gridPanel *rightPanel = new gridPanel(panel); // le panel de droite, c'est la classe qui gère la grille
-	pickPanel *leftPanel = new pickPanel(panel); // le panel de gauche, ce sera le picker
+	leftPanel = new pickPanel(panel); // le panel de gauche, ce sera le picker
+	rightPanel = new gridPanel(panel, leftPanel); // le panel de droite, c'est la classe qui gère la grille
 
-	leftPanel->setGrid(rightPanel);
 
 	wxColour leftColour(50,45,50); //  Créé une couleur pour le panel de gauche, celui de droite sera la grille
 
@@ -53,7 +52,7 @@ void WinMain::quit() {
 bool WinMain::loadRule() {
 	/* afficher la fenêtre de chargement d'une règle */
 	/* tout est modal. Retourner la réussite du chargement ou pas */
-	WinLoader *loader = new WinLoader(this);
+	WinLoader *loader = new WinLoader(this, rightPanel, leftPanel);
 	loader->ShowModal(); 
 	return true;
 }
@@ -133,7 +132,8 @@ void WinMain::onSettings(wxCommandEvent & WXUNUSED(event)) {
 }
 
 void WinMain::onPlay(wxCommandEvent & WXUNUSED(event)) {
-	togglePlay(); // on part du principe que le toggle bloque bien les différentes options
+	//togglePlay();
+
 }
 
 void WinMain::onPause(wxCommandEvent & WXUNUSED(event)) {
@@ -141,7 +141,7 @@ void WinMain::onPause(wxCommandEvent & WXUNUSED(event)) {
 }
 
 void WinMain::onStep(wxCommandEvent & WXUNUSED(event)) {
-	nextStep();
+	rightPanel->play();
 }
 
 void WinMain::onReload(wxCommandEvent & WXUNUSED(event)) {
@@ -307,4 +307,5 @@ BEGIN_EVENT_TABLE(WinMain, wxFrame)
     EVT_MENU		(evt_about, WinMain::onAbout) // lorsque qu'on veut des infos supplémentaires
     EVT_MENU		(evt_helpOnline, WinMain::onHelpOnline)
     EVT_MENU		(evt_help, WinMain::onHelp)
+    EVT_MENU		(evt_step, WinMain::onStep)
 END_EVENT_TABLE()

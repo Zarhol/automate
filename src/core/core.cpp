@@ -159,6 +159,11 @@ Color const& Core::getColor(long long const& x, long long const& y) const {
 string Core::getStateName(unsigned int state) {
 	return rule_.getStateName(state);
 }
+
+unsigned int Core::stateCount() const {
+	return rule_.getStatesCount();
+}
+
 bool Core::isInRect(const_iterator const& it, Rect const& win, Rect * toCoord) const {
 	if(it->first.first < win.x || it->first.first > win.x + win.width
 	|| it->first.second < win.y || it->first.second > win.y + win.height) {
@@ -169,6 +174,18 @@ bool Core::isInRect(const_iterator const& it, Rect const& win, Rect * toCoord) c
 		toCoord->y = (it->first.second - win.y);
 	}
 	return true;
+}
+
+string Core::debug(string const& pathname, Rule_type type) const {
+	Loader l;
+	if(!l.load(pathname, type)){
+		string ret;
+		while(l.hasError()) {
+			ret += l.getError() + "\n";
+		}
+		return ret;
+	}
+	return "";
 }
 
 Core::iterator Core::begin() {

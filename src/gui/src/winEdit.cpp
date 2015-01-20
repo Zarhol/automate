@@ -8,6 +8,7 @@ WinEdit::WinEdit(wxFrame *parent)
 		Center();
 		
 		wxPanel *panel = new wxPanel(this, wxID_ANY);
+		path = new wxString(_T(""));
 
 		//l'editeur de texte
 		text = new wxStyledTextCtrl(panel, wxID_ANY,wxDefaultPosition, wxDefaultSize, 0 , _T("editeur"));
@@ -19,7 +20,7 @@ WinEdit::WinEdit(wxFrame *parent)
 		text->SetMarginWidth(2, 0);
 		
 		//c'est le texte du debuggueur, le texte est en readonly
-		wxTextCtrl *debug = new wxTextCtrl(panel, wxID_ANY,_T(""), wxDefaultPosition,wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE,wxDefaultValidator, _T("debogueur"));
+		debug = new wxTextCtrl(panel, wxID_ANY,_T(""), wxDefaultPosition,wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE,wxDefaultValidator, _T("debogueur"));
 		
 		//ajoute un texte au debuggueur
 		debug->AppendText(_T("Debugguer...\n"));
@@ -64,6 +65,7 @@ WinEdit::WinEdit(wxFrame *parent)
 			wxMessageBox(_T("Il y a eu un problème au moment de charger le fichier"), _T("Echec chargement"));
 			return;
 		}
+		path = new wxString(openFileDialog.GetPath());
 	}
 	void WinEdit::onSave(wxCommandEvent& event){
 		wxFileDialog saveFileDialog(this, _("Sauvegarder"), _T(""), _T(""),_T("ACR and ACC files (*.acr;*.acc)|*.acr;*.acc"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
@@ -76,7 +78,32 @@ WinEdit::WinEdit(wxFrame *parent)
 			wxMessageBox(_T("Il y a eu un problème au moment de sauvegarder le fichier"), _T("Echec sauvagarde"));
 			return;
 		}
-		
+		path = new wxString(saveFileDialog.GetPath());
+	}
+
+	void WinEdit::onDebug(wxCommandEvent& event){
+		if(text->GetModify()){
+			wxMessageBox(_T("Il faut sauvegarder votre fichier avant de pouvoir le debugguer"), _T("Erreur"));
+			return;
+		}
+		debug->Clear();
+		Core *a = &Core::getInstance();
+		boost::cmatch match;
+		if(boost::regex_match(std::string(path->mb_str()).c_str(), match, boost::regex(".*\\.acr"))){
+			std::string str = a->debug(std::string(path->mb_str()),type_rule);
+			if(str.empty()){
+				str = "Règle valide";
+			}
+			debug->AppendText(wxString(str.c_str(), wxConvUTF8));
+		}
+		else{ //ici couleur
+			std::string str = a->debug(std::string(path->mb_str()),type_color);
+			if(str.empty()){
+				str = "Règle valide";
+			}
+			debug->AppendText(wxString(str.c_str(), wxConvUTF8));
+		}
+
 	}
 
 	void WinEdit::loadToolBar(){
@@ -99,4 +126,5 @@ WinEdit::WinEdit(wxFrame *parent)
 		EVT_TOOL	(evt_new, WinEdit::onNew)
 		EVT_TOOL	(evt_save, WinEdit::onSave)
 		EVT_TOOL	(evt_load, WinEdit::onLoad)
+		EVT_TOOL	(evt_debog, WinEdit::onDebug)
 END_EVENT_TABLE()

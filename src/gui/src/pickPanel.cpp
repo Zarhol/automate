@@ -2,71 +2,75 @@
 
 pickPanel::pickPanel (wxPanel *Parent)
 					:wxPanel(Parent) {
-
+    wxSize taille = GetSize();
+    list = new wxListCtrl(this, evt_select, wxDefaultPosition,taille,wxLC_REPORT | wxLC_NO_HEADER);
 }
+ 
 
-void pickPanel::setGrid(gridPanel *grille){
-    grid = grille;
-}
-
-
-void pickPanel::onResize(wxSizeEvent& event){
-
-
-	wxSize taille = GetSize();
-	wxListCtrl *list = new wxListCtrl(this, evt_select, wxDefaultPosition,taille,wxLC_REPORT | wxLC_NO_HEADER);
- 	
- 	
-    wxListItem col0; //créé la première colonne
-    col0.SetId(0);
-    col0.SetText( _("Couleur") );
-    col0.SetWidth(taille.GetWidth()*1/5);
-    list->InsertColumn(0, col0);
+void pickPanel::reset(){
+    std::cout << "reset" << std::endl;
+    Core *a = &Core::getInstance();
+    unsigned int stateCount = a->stateCount();
+    wxSize taille = GetSize();
+    
+    delete list;
+    list = new wxListCtrl(this, evt_select, wxDefaultPosition,taille,wxLC_REPORT | wxLC_NO_HEADER);
 
     wxListItem col1; //crée la deuxième colonne
-    col1.SetId(1);
+    col1.SetId(0);
     col1.SetText( _("Nom d'état") );
-    col1.SetWidth(taille.GetWidth()*4/5);
-    list->InsertColumn(1, col1);
-	
-    wxListItem etat1;	//créé la première ligne
-    etat1.SetId(0);
-    list->InsertItem(0, etat1);
-    list->SetItem(0,0,_T("Noir"));
-    list->SetItem(0,1,_T("EtatNoir"));
+    col1.SetWidth(taille.GetWidth());
+    list->InsertColumn(0, col1);
 
-    wxListItem etat2; //crée la deuxième ligne
-    etat2.SetId(1);
-    list->InsertItem(1,etat2);
-    list->SetItem(1,0,_T("Blanc"));
-    list->SetItem(1,1,_T("EtatBlanc"));
+            std::cout << stateCount << std::endl;
+    for(unsigned int i = 0; i < stateCount; ++i){
+        wxListItem etat; 
+        etat.SetId(i);
+        list->InsertItem(i,etat);
+
+        std::cout << "i : " << i << std::endl;
+        if(i >= stateCount) {
+            std::cout << "mah" << std::endl;
+            exit(1);
+        }
+        else {
+            std::cout << "meyh" << std::endl;
+        }
+        list->SetItem(i,0,wxString(a->getStateName(i).c_str(),wxConvUTF8));
+        std::cout<< a->getStateName(i) << std::endl; 
+    }
+
 
     
     list->SetBackgroundColour(wxColour(50,45,50));
     list->SetForegroundColour(wxColour(255,255,255));
 
-	int x = taille.GetWidth();
-	int y = taille.GetHeight();
+}
 
-	std::cout<<"x : "<< x <<" | y : "<< y <<std::endl;
+std::vector<unsigned int> pickPanel::getStates(){
+    Core *a = &Core::getInstance();
+    unsigned int stateCount = a->stateCount();
+    std::vector<unsigned int> vec;
+    long item = -1;
+    while(1){
+        item = list->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        if(item == -1) break;
+        vec.push_back(item);
+    }
+    return vec;
+    
+}
+
+
+void pickPanel::onResize(wxSizeEvent& event){
+
 	
 }
 
 void pickPanel::onSelect(wxListEvent& event){
 	long a = event.GetIndex(); // renvoi l'evenement selectionné
-	if( a == 0 ){
-        wxColour *a = new wxColour(0,0,0); // creer une nouvelle couleur (a changer plus tard surement)
-        grid->setColour(a); //règle la couleur quand on colorie
-        std::cout<<"c'est noir !!"<<std::endl;
-	}
-	else if (a == 1){
-        wxColour *b = new wxColour(255,255,255);
-		grid->setColour(b);
-        std::cout<<"c'est blanc !!"<<std::endl;
-	}
-	else{
-		wxMessageBox(_T("ya un bug dans ltruc"), _T("BOOM !"));
-	}
+    std::cout<<"élément : "<<a <<" sélectionné"<<std::endl;
+
 }
 
 BEGIN_EVENT_TABLE(pickPanel, wxPanel)

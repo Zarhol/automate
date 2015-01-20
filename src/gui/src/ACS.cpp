@@ -1,8 +1,8 @@
 #include "utils.h"
 #include "ACS.h"
 #include "winMain.h"
-
-IMPLEMENT_APP(ACS);
+ 
+IMPLEMENT_APP(ACS); 
 
 bool ACS::OnInit()
 {

@@ -1,12 +1,12 @@
 #ifndef _WIN_MAIN_H_
 #define _WIN_MAIN_H_
-
+ 
 #include "utils.h"
 #include "winAbout.h"
 #include "winHelpOnline.h"
 #include "winHelp.h"
 #include "winEdit.h"
-#include "winLoader.h"
+#include "winLoader.h" 
 #include "gridPanel.h"
 #include "pickPanel.h"
 #include <wx/colordlg.h>
@@ -18,9 +18,13 @@
 class WinMain : public wxFrame {
 	protected:
 		bool play_; // vrai si en lecture, faux sinon
+
 		
 	public:
 		WinMain(wxString const& title);
+
+		gridPanel *rightPanel;
+		pickPanel *leftPanel;
 
 		void updateGrid(); // permet de rafraichir la grille affichée
 		void quit(); // permet de fermer proprement la fenêtre en sauvegardant ce qu'il faut

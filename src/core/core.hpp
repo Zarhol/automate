@@ -56,10 +56,13 @@ class Core {
 		Color const& getColor(long long const& x, long long const& y) const;
 
 		std::string getStateName(unsigned int state); // renvoie le nom de l'état correspondant à l'index state
+		unsigned int stateCount() const; // retourne le nombre d'état que peuvent avoir les cellules
 
 		// renvoie si une cellule it est dans la fenêtre de vue win. Si oui et que coord != NULL
 		// rempli coord avec sa coordonnée dans la fenêtre
 		bool isInRect(const_iterator const& it, Rect const& win, Rect * toCoord = NULL) const;
+
+		std::string debug(std::string const& pathname, Rule_type type) const;
 
 		const_iterator end() const;
 		iterator end();
